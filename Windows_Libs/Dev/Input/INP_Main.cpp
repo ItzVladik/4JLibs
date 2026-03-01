@@ -256,7 +256,7 @@ void CInput::SetJoypadSensitivity(int iPad, float fSensitivity)
 void CInput::SetGameJoypadMaps(unsigned char ucMap, unsigned char ucAction, unsigned int uiActionVal)
 {
 	assert(ucMap<m_ucJoypadMapC);
-	assert(ucAction<m_ucJoypadMapC);
+	assert(ucAction<m_ucJoypadMapActionC);
 
 	m_JoypadMap[ucMap][ucAction] = uiActionVal;
 }
@@ -264,7 +264,7 @@ void CInput::SetGameJoypadMaps(unsigned char ucMap, unsigned char ucAction, unsi
 unsigned int CInput::GetGameJoypadMaps(unsigned char ucMap, unsigned char ucAction)
 {
 	assert(ucMap<m_ucJoypadMapC);
-	assert(ucAction<m_ucJoypadMapC);
+	assert(ucAction<m_ucJoypadMapActionC);
 
 	return m_JoypadMap[ucMap][ucAction];
 }
