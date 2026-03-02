@@ -74,7 +74,7 @@ void Renderer::TextureSetParam(int param, int value)
         }
         break;
     case GL_TEXTURE_WRAP_T:
-    case 5:
+    case 5: // GL_TEXTURE_WRAP_R, but this renderer only supports 2D textures, so treat it as GL_TEXTURE_WRAP_T
         texture.samplerParams &= ~2u;
         if (value == 0)
         {
