@@ -1,5 +1,6 @@
 #pragma once
 #include "4J_Render.h"
+#include "Profiler.h"
 #include <cstdint>
 #include <unordered_map>
 #include <vector>

@@ -226,12 +226,15 @@ void Renderer::CaptureScreen(ImageFileBuffer *, XSOCIAL_PREVIEWIMAGE *) {}
 
 void Renderer::Clear(int flags, D3D11_RECT *)
 {
+    PROFILER_SCOPE("Renderer::Clear", "Clear", MP_MAGENTA)
+
     Renderer::Context &c = getContext();
 
     ID3D11BlendState *blendState = NULL;
     ID3D11DepthStencilState *depthState = NULL;
     ID3D11RasterizerState *rasterizerState = NULL;
 
+    PROFILER_SCOPE("Renderer::Clear", "Blend", MP_MAGENTA)
     D3D11_BLEND_DESC blendDesc = {};
     blendDesc.AlphaToCoverageEnable = false;
     blendDesc.IndependentBlendEnable = false;
@@ -245,6 +248,7 @@ void Renderer::Clear(int flags, D3D11_RECT *)
     blendDesc.RenderTarget[0].RenderTargetWriteMask = (flags & CLEAR_COLOUR_FLAG) ? D3D11_COLOR_WRITE_ENABLE_ALL : 0;
     m_pDevice->CreateBlendState(&blendDesc, &blendState);
 
+    PROFILER_SCOPE("Renderer::Clear", "Depth", MP_MAGENTA)
     D3D11_DEPTH_STENCIL_DESC depthDesc = {};
     depthDesc.DepthEnable = (flags & CLEAR_DEPTH_FLAG) ? true : false;
     depthDesc.DepthWriteMask = depthDesc.DepthEnable ? D3D11_DEPTH_WRITE_MASK_ALL : D3D11_DEPTH_WRITE_MASK_ZERO;
@@ -262,6 +266,7 @@ void Renderer::Clear(int flags, D3D11_RECT *)
     depthDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
     m_pDevice->CreateDepthStencilState(&depthDesc, &depthState);
 
+    PROFILER_SCOPE("Renderer::Clear", "Rasterizer", MP_MAGENTA)
     D3D11_RASTERIZER_DESC rasterDesc = {};
     rasterDesc.FillMode = D3D11_FILL_SOLID;
     rasterDesc.CullMode = D3D11_CULL_NONE;
@@ -269,6 +274,7 @@ void Renderer::Clear(int flags, D3D11_RECT *)
     rasterDesc.MultisampleEnable = true;
     m_pDevice->CreateRasterizerState(&rasterDesc, &rasterizerState);
 
+    PROFILER_SCOPE("Renderer::Clear", "DrawClearQuad", MP_MAGENTA)
     c.m_pDeviceContext->VSSetShader(screenClearVertexShader, NULL, 0);
     c.m_pDeviceContext->IASetInputLayout(NULL);
     c.m_pDeviceContext->PSSetShader(screenClearPixelShader, NULL, 0);
@@ -361,6 +367,11 @@ void Renderer::Initialise(ID3D11Device *pDevice, IDXGISwapChain *pSwapChain)
     m_pDevice = pDevice;
     m_pDeviceContext = InitialiseContext(true);
     m_pSwapChain = pSwapChain;
+
+    #ifdef ENABLE_PROFILING
+    MicroProfileOnThreadCreate("MainRenderThread");
+    MicroProfileSetEnableAllGroups(true);
+    #endif
 
     m_commandHandleToIndex = new int16_t[NUM_COMMAND_HANDLES];
     m_commandBuffers = new CommandBuffer *[MAX_COMMAND_BUFFERS];
@@ -554,8 +565,12 @@ bool Renderer::IsWidescreen()
 
 void Renderer::Present()
 {
+    PROFILER_SCOPE("Renderer::Present", "Present", MP_MAGENTA)
+
     if (m_bShouldScreenGrabNextFrame)
     {
+        PROFILER_SCOPE("Renderer::Present", "ScreenGrab", MP_MAGENTA)
+
         unsigned char *linearData = new unsigned char[kScreenGrabWidth * kScreenGrabHeight * 4];
         
         ID3D11Texture2D *backBuffer = NULL;
@@ -575,6 +590,7 @@ void Renderer::Present()
 
         if (stagingTexture && backBuffer)
         {
+            PROFILER_SCOPE("Renderer::Present", "CopyResource", MP_MAGENTA)
             m_pDeviceContext->CopyResource(stagingTexture, backBuffer);
 
             D3D11_MAPPED_SUBRESOURCE mapped = {};
@@ -692,6 +708,8 @@ void Renderer::SetupShaders()
 
 void Renderer::StartFrame()
 {
+    PROFILER_SCOPE("Renderer::StartFrame", "StartFrame", MP_MAGENTA)
+
     Renderer::Context &c = getContext();
 
     activeVertexType = -1;
@@ -699,6 +717,8 @@ void Renderer::StartFrame()
 
     TextureBindVertex(-1);
     TextureBind(-1);
+
+    PROFILER_SCOPE("Renderer::StartFrame", "State", MP_MAGENTA)
 
     StateSetColour(1.0f, 1.0f, 1.0f, 1.0f);
     StateSetDepthMask(true);
@@ -725,6 +745,10 @@ void Renderer::StartFrame()
     viewport.MaxDepth = 1.0f;
     c.m_pDeviceContext->RSSetViewports(1, &viewport);
     c.m_pDeviceContext->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
+
+    #ifdef ENABLE_PROFILING
+    MicroProfileFlip(nullptr);
+    #endif
 }
 
 void Renderer::Suspend()

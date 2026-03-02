@@ -6,6 +6,7 @@
 
 ID3D11BlendState *Renderer::GetManagedBlendState()
 {
+    PROFILER_SCOPE("Renderer::GetManagedBlendState", "GetManagedBlendState", MP_ORCHID1)
     Context &c = getContext();
     const D3D11_RENDER_TARGET_BLEND_DESC &rtBlend = c.blendDesc.RenderTarget[0];
 
@@ -24,6 +25,7 @@ ID3D11BlendState *Renderer::GetManagedBlendState()
 
 ID3D11DepthStencilState *Renderer::GetManagedDepthStencilState()
 {
+    PROFILER_SCOPE("Renderer::GetManagedBlendState", "GetManagedDepthStencilState", MP_ORCHID1)
     Context &c = getContext();
 
     const int key = (c.depthStencilDesc.DepthEnable ? 2 : 0) | ((static_cast<int>(c.depthStencilDesc.DepthFunc) & 0x0F) << 2) |
@@ -41,6 +43,7 @@ ID3D11DepthStencilState *Renderer::GetManagedDepthStencilState()
 
 ID3D11RasterizerState *Renderer::GetManagedRasterizerState()
 {
+    PROFILER_SCOPE("Renderer::GetManagedRasterizerState", "GetManagedRasterizerState", MP_ORCHID1)
     Context &c = getContext();
 
     const int key = (static_cast<std::uint8_t>(c.rasterizerDesc.DepthBias)) |
@@ -59,6 +62,7 @@ ID3D11RasterizerState *Renderer::GetManagedRasterizerState()
 
 ID3D11SamplerState *Renderer::GetManagedSamplerState()
 {
+    PROFILER_SCOPE("Renderer::GetManagedSamplerState", "GetManagedSamplerState", MP_ORCHID1)
     Context &c = getContext();
     const int key = m_textures[c.textureIdx].samplerParams;
 
@@ -376,6 +380,7 @@ void Renderer::StateSetDepthSlopeAndBias(float slope, float bias)
 
 void Renderer::UpdateFogState()
 {
+    PROFILER_SCOPE("Renderer::UpdateFogState", "UpdateFogState", MP_ORCHID1)
     Context &c = getContext();
     ID3D11DeviceContext *d3d11 = c.m_pDeviceContext;
 
@@ -420,6 +425,7 @@ void Renderer::StateSetVertexTextureUV(float u, float v)
 
 void Renderer::UpdateTexGenState()
 {
+    PROFILER_SCOPE("Renderer::UpdateTexGenState", "UpdateTexGenState", MP_ORCHID1)
     Context &c = getContext();
 
     D3D11_MAPPED_SUBRESOURCE mapped = {};
@@ -430,6 +436,7 @@ void Renderer::UpdateTexGenState()
 
 void Renderer::UpdateLightingState()
 {
+    PROFILER_SCOPE("Renderer::UpdateLightingState", "UpdateLightingState", MP_ORCHID1)
     Context &c = getContext();
     if (!c.lightingDirty || !c.lightingEnabled)
     {
@@ -608,6 +615,7 @@ void Renderer::StateSetForceLOD(int LOD)
 
 void Renderer::StateUpdate()
 {
+    PROFILER_SCOPE("Renderer::StateUpdate", "StateUpdate", MP_ORCHID1)
     Context &c = getContext();
     StateSetFaceCull(c.faceCullEnabled);
     StateSetDepthMask(c.depthWriteEnabled);

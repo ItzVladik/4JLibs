@@ -71,6 +71,8 @@ void Renderer::CommandBuffer::AddMatrix(const float *matrix)
 
 void Renderer::CommandBuffer::AddVertices(unsigned int stride, unsigned int count, void *dataIn, Renderer::Context &c)
 {
+    PROFILER_SCOPE("Renderer::CommandBuffer::AddVertices", "AddVertices", MP_ORANGE)
+
     if (c.matrixDirty[MATRIX_MODE_MODELVIEW_CBUFF])
     {
         AddMatrix(InternalRenderManager.MatrixGet(MATRIX_MODE_MODELVIEW_CBUFF));
@@ -243,6 +245,8 @@ void Renderer::CommandBuffer::SetFaceCull(bool enable)
 
 void Renderer::CommandBuffer::Render(C4JRender::eVertexType vType, Renderer::Context &c, int primitiveType)
 {
+    PROFILER_SCOPE("Renderer::CommandBuffer::Render", "Render", MP_ORANGE)
+
     if (!m_vertexBuffer)
         return;
 
@@ -252,6 +256,7 @@ void Renderer::CommandBuffer::Render(C4JRender::eVertexType vType, Renderer::Con
 
     for (const Command &command : m_commands)
     {
+        PROFILER_SCOPE("Renderer::CommandBuffer::Render", "ProcessCommand", MP_ORANGE)
 
         switch (command.m_command_type)
         {

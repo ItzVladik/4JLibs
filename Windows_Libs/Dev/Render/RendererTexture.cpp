@@ -37,6 +37,7 @@ void user_flush_data(png_struct_def* png_ptr)
 
 int Renderer::TextureCreate()
 {
+    PROFILER_SCOPE("Renderer::TextureCreate", "TextureCreate", MP_PURPLE4)
     for (int i = 0; i < MAX_TEXTURES; i++)
     {
         if (!m_textures[i].allocated)
@@ -53,6 +54,7 @@ int Renderer::TextureCreate()
 
 void Renderer::TextureFree(int idx)
 {
+    PROFILER_SCOPE("Renderer::TextureFree", "TextureFree", MP_PURPLE4)
     if (m_textures[idx].texture)
     {
         m_textures[idx].texture->Release();
@@ -68,6 +70,7 @@ void Renderer::TextureFree(int idx)
 
 void Renderer::TextureBind(int idx)
 {
+    PROFILER_SCOPE("Renderer::TextureBind", "TextureBind", MP_PURPLE4)
     if (idx == -1)
         idx = defaultTextureIndex;
 
@@ -84,6 +87,7 @@ void Renderer::TextureBind(int idx)
 
 void Renderer::TextureBindVertex(int idx)
 {
+    PROFILER_SCOPE("Renderer::TextureBindVertex", "TextureBindVertex", MP_PURPLE4)
     if (idx == -1)
         idx = defaultTextureIndex;
 
@@ -109,6 +113,7 @@ int Renderer::TextureGetTextureLevels()
 
 void Renderer::TextureData(int width, int height, void* data, int level, C4JRender::eTextureFormat format)
 {
+    PROFILER_SCOPE("Renderer::TextureData", "TextureData", MP_PURPLE4)
     Context& c = getContext();
     int idx = c.textureIdx;
 
@@ -145,6 +150,7 @@ void Renderer::TextureData(int width, int height, void* data, int level, C4JRend
 
 void Renderer::TextureDataUpdate(int xoffset, int yoffset, int width, int height, void* data, int level)
 {
+    PROFILER_SCOPE("Renderer::TextureDataUpdate", "TextureDataUpdate", MP_PURPLE4)
     Context& c = getContext();
     int idx = c.textureIdx;
 
@@ -222,6 +228,7 @@ void Renderer::UpdateTextureState(bool bVertex)
 
 HRESULT Renderer::LoadTextureData(const char* szFilename, D3DXIMAGE_INFO* pSrcInfo, int** ppDataOut)
 {
+    PROFILER_SCOPE("Renderer::LoadTextureData_File", "LoadTextureData_File", MP_PURPLE4)
     png_image image;
     memset(&image, 0, sizeof(image));
     image.version = PNG_IMAGE_VERSION;
@@ -246,6 +253,7 @@ HRESULT Renderer::LoadTextureData(const char* szFilename, D3DXIMAGE_INFO* pSrcIn
 
 HRESULT Renderer::LoadTextureData(BYTE* pbData, DWORD dwBytes, D3DXIMAGE_INFO* pSrcInfo, int** ppDataOut)
 {
+    PROFILER_SCOPE("Renderer::LoadTextureData_Memory", "LoadTextureData_Memory", MP_PURPLE4)
     png_image image;
     memset(&image, 0, sizeof(image));
     image.version = PNG_IMAGE_VERSION;
@@ -270,6 +278,7 @@ HRESULT Renderer::LoadTextureData(BYTE* pbData, DWORD dwBytes, D3DXIMAGE_INFO* p
 
 HRESULT Renderer::SaveTextureData(const char* szFilename, D3DXIMAGE_INFO* pSrcInfo, int* ppDataOut)
 {
+    PROFILER_SCOPE("Renderer::SaveTextureData", "SaveTextureData", MP_PURPLE4)
     png_image image;
     memset(&image, 0, sizeof(image));
     image.width = pSrcInfo->Width;
@@ -283,6 +292,7 @@ HRESULT Renderer::SaveTextureData(const char* szFilename, D3DXIMAGE_INFO* pSrcIn
 
 HRESULT Renderer::SaveTextureDataToMemory(void* pOutput, int outputCapacity, int* outputLength, int width, int height, int* ppDataIn)
 {
+    PROFILER_SCOPE("Renderer::SaveTextureDataToMemory", "SaveTextureDataToMemory", MP_PURPLE4)
     png_image image;
     memset(&image, 0, sizeof(image));
     image.width = width;
